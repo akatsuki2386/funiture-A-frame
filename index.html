@@ -14,6 +14,8 @@
             overflow: hidden;
         }
         canvas { display: block; }
+
+        /* タイトルコンテナはAR開始前は表示されるようにデフォルトをblockに */
         #title-container {
             position: absolute;
             top: 40%;
@@ -22,6 +24,7 @@
             text-align: center;
             z-index: 5;
             width: 90%;
+            display: block; /* 初期表示をblockに設定 */
         }
         #title-container h1 {
             font-size: 2.2rem;
@@ -30,7 +33,9 @@
             color: white;
             text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
-        #ARButton {
+
+        /* A-Frameが生成するARボタンにカスタムスタイルを適用 */
+        .a-enter-ar-button, .a-enter-vr-button {
             color: white !important;
             background-color: rgba(255, 255, 255, 0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -49,6 +54,7 @@
             z-index: 100 !important;
             white-space: nowrap !important;
         }
+
         #overlay {
             position: fixed;
             top: 0;
@@ -677,7 +683,7 @@
 <body>
     <div id="title-container">
         <h1>AR家具配置<br>シミュレーション</h1>
-    </div>
+        </div>
 
     <div id="overlay">
 
@@ -956,7 +962,7 @@
                 visible="false">
             </a-entity>
             <a-image id="cross-mark"
-                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InJnYmEoMjA0LCAwLCAwLCAwLjgpIi8+PHBhdGggZD0iTTE5Mi4xNDIgNjMuODU4TDYzLjg1OCAxOTIuMTQyTTYzLjg1OCAzMi44NTdMMTkyLjE0MiAxMjYuMTQzIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4="
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InJnYmEoMjA0LCAwLCAwLCAwLjgpIi8+PHBhdGggZD0iTTE5Mi4xNDIgNjMuODU4TDYzLjg1OCAxOTIuMTQyTTYzLjg1OCAzMi44NTdMMTkyLjE0MiAxMjYuMTQzIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Z2c+"
                 position="0 0 -3"
                 scale="0.5 0.5 1"
                 visible="false"></a-image>
@@ -966,16 +972,7 @@
             <a-asset-item id="chair-model" src="chair.glb"></a-asset-item>
             <a-asset-item id="bookshelf-model" src="bookshelf.glb"></a-asset-item>
             <a-asset-item id="stand-model" src="stand.glb"></a-asset-item>
-            <a-asset-item id="dining-table-model" src="dining_table.glb"></a-asset-item>
-            <a-asset-item id="sofa-model" src="sofa.glb"></a-asset-item>
-            <a-asset-item id="floor-lamp-model" src="floor_lamp.glb"></a-asset-item>
-            <a-asset-item id="desk-model" src="desk.glb"></a-asset-item>
-            <a-asset-item id="side-table-model" src="side_table.glb"></a-asset-item>
-            <a-asset-item id="single-bed-model" src="single_bed.glb"></a-asset-item>
-            <a-asset-item id="tv-board-model" src="tv_board.glb"></a-asset-item>
-            <a-asset-item id="low-table-model" src="low_table.glb"></a-asset-item>
-            <a-asset-item id="coat-hanger-model" src="coat_hanger.glb"></a-asset-item>
-        </a-assets>
+            </a-assets>
 
     </a-scene>
 
@@ -1027,15 +1024,16 @@
             { name: 'イス', file: 'chair.glb', height: 0.79, category: 'チェア', thumbnail: 'thumbnails/chair_thumb.png' },
             { name: '本棚', file: 'bookshelf.glb', height: 1.8, category: '収納', thumbnail: 'thumbnails/bookshelf_thumb.png' },
             { name: '脚立', file: 'stand.glb', height: 1.2, category: 'その他', thumbnail: 'thumbnails/stand_thumb.png' },
-            { name: 'ダイニングテーブル', file: 'dining_table.glb', height: 0.75, category: 'テーブル', thumbnail: 'thumbnails/dining_table_thumb.png' },
-            { name: 'ソファ', file: 'sofa.glb', height: 0.7, category: 'ソファ', thumbnail: 'thumbnails/sofa_thumb.png' },
-            { name: 'フロアランプ', file: 'floor_lamp.glb', height: 1.5, category: '照明', thumbnail: 'thumbnails/floor_lamp_thumb.png' },
-            { name: 'デスク', file: 'desk.glb', height: 0.72, category: 'テーブル', thumbnail: 'thumbnails/desk_thumb.png' },
-            { name: 'サイドテーブル', file: 'side_table.glb', height: 0.5, category: 'テーブル', thumbnail: 'thumbnails/side_table_thumb.png' },
-            { name: 'シングルベッド', file: 'single_bed.glb', height: 0.6, category: 'ベッド', thumbnail: 'thumbnails/single_bed_thumb.png' },
-            { name: 'テレビボード', file: 'tv_board.glb', height: 0.4, category: '収納', thumbnail: 'thumbnails/tv_board_thumb.png' },
-            { name: 'ローテーブル', file: 'low_table.glb', height: 0.35, category: 'テーブル', thumbnail: 'thumbnails/low_table_thumb.png' },
-            { name: 'コートハンガー', file: 'coat_hanger.glb', height: 1.7, category: 'その他', thumbnail: 'thumbnails/coat_hanger_thumb.png' },
+            // 404エラーが出ているモデルは一時的にコメントアウト (HTMLのa-asset-itemと同期)
+            // { name: 'ダイニングテーブル', file: 'dining_table.glb', height: 0.75, category: 'テーブル', thumbnail: 'thumbnails/dining_table_thumb.png' },
+            // { name: 'ソファ', file: 'sofa.glb', height: 0.7, category: 'ソファ', thumbnail: 'thumbnails/sofa_thumb.png' },
+            // { name: 'フロアランプ', file: 'floor_lamp.glb', height: 1.5, category: '照明', thumbnail: 'thumbnails/floor_lamp_thumb.png' },
+            // { name: 'デスク', file: 'desk.glb', height: 0.72, category: 'テーブル', thumbnail: 'thumbnails/desk_thumb.png' },
+            // { name: 'サイドテーブル', file: 'side_table.glb', height: 0.5, category: 'テーブル', thumbnail: 'thumbnails/side_table_thumb.png' },
+            // { name: 'シングルベッド', file: 'single_bed.glb', height: 0.6, category: 'ベッド', thumbnail: 'thumbnails/single_bed_thumb.png' },
+            // { name: 'テレビボード', file: 'tv_board.glb', height: 0.4, category: '収納', thumbnail: 'thumbnails/tv_board_thumb.png' },
+            // { name: 'ローテーブル', file: 'low_table.glb', height: 0.35, category: 'テーブル', thumbnail: 'thumbnails/low_table_thumb.png' },
+            // { name: 'コートハンガー', file: 'coat_hanger.glb', height: 1.7, category: 'その他', thumbnail: 'thumbnails/coat_hanger_thumb.png' },
         ];
         let allCategories = [];
         let currentCategoryIndex = 0;
@@ -1223,10 +1221,8 @@
                 if (!currentScene.is('ar-mode')) return;
 
                 if (appState === 'PLACING' || appState === 'EDITING') {
-                    // console.log(`Visibility update: AppState=${appState}, isEditMode=${isEditMode}, isFloorDetected=${this.isFloorDetected}`);
                     if (this.isFloorDetected && isEditMode) {
                         // isCurrentlyPlaceableはtickで計算されるので、ここではUI要素の表示/非表示のみを制御
-                        // レティクルとクロスマークの最終的な表示はtickで決定されるため、ここではとりあえず有効化
                         // tickで位置と可否を判断して、最終的なvisibleが設定される
                     } else {
                         this.reticle.setAttribute('visible', 'false');
@@ -1257,7 +1253,8 @@
 
                 this.setupHtmlListeners();
 
-                this.scene.addEventListener('ar-hit-test-found', this.onHitTestFound.bind(this));
+                // Three.js版の名残だが使われていない
+                // this.scene.addEventListener('ar-hit-test-found', this.onHitTestFound.bind(this));
                 this.scene.addEventListener('enter-vr', this.onEnterVR.bind(this));
                 this.scene.addEventListener('exit-vr', this.onExitVR.bind(this));
                 this.scene.addEventListener('placeability-changed', (event) => {
@@ -1403,7 +1400,11 @@
                     const pressEnd = () => {
                         clearTimeout(pressTimer);
                         if (!this.isRotatingContinuously) {
-                            this.onRotateClick(event, direction); // 短押しの場合
+                            // 短押しの場合のみ onRotateClick を呼び出す
+                            // event はこのスコープでは定義されていないので、e を使うか、
+                            // onRotateClick の引数から event を削除する (ボタンからのトリガーなので不要)
+                            // ここでは、e.stopPropagation() が既にされているので、event を渡さなくても良い
+                            this.onRotateClick({}, direction); // 仮の空オブジェクトを渡す
                         }
                         this.stopContinuousRotation();
                     };
@@ -1591,6 +1592,13 @@
                 }
 
                 // カメラの正面方向でIntersectionをチェック
+                // this.camera が DOM 要素なので .components.raycaster.intersections にアクセス
+                // 念のため camera 要素が存在するか確認
+                if (!this.camera) {
+                    this.camera = document.getElementById('camera');
+                    if (!this.camera) return; // まだ見つからない場合は処理をスキップ
+                }
+
                 const intersection = this.camera.components.raycaster.intersections[0];
                 let newHoveredObject = null;
 
@@ -1671,6 +1679,17 @@
                 this.previewObject.userData.furnitureData = selectedFurnitureData; // 家具データをuserDataに保存
 
                 this.previewObject.addEventListener('model-loaded', () => {
+                    // ここでuserData.centerOffsetを設定する必要がある
+                    const model = this.previewObject.object3D;
+                    const box = new AFRAME.THREE.Box3().setFromObject(model);
+                    const center = new AFRAME.THREE.Vector3();
+                    box.getCenter(center);
+                    const size = box.getSize(new AFRAME.THREE.Vector3());
+
+                    // 初期スケールを反映したcenterOffsetを計算し保存
+                    const scaleFactor = selectedFurnitureData.height / size.y;
+                    this.previewObject.object3D.userData.centerOffset = center.multiplyScalar(scaleFactor);
+
                     this.setObjectTransparency(this.previewObject.object3D, true); // ロード後に透明にする
                     updateSliderForObject(this.previewObject.object3D); // スライダーを初期状態に設定
                 });
@@ -1767,17 +1786,52 @@
             }
         });
 
+        // 削除対象オブジェクトのリスト（アニメーション用）
+        const objectsToDelete = [];
+
+
+        // A-Frameシーン要素の取得（DOMがロードされてから利用可能になる）
+        let aScene = null;
+        document.addEventListener('DOMContentLoaded', () => {
+            aScene = document.querySelector('a-scene');
+
+            // A-Frameシーンが完全にロードされてからUIの初期化とイベントリスナーを設定
+            if (aScene) {
+                aScene.addEventListener('loaded', () => {
+                    console.log('A-Frame scene loaded.'); // シーンがロードされたことを確認するためのログ
+
+                    // VRセッション終了時にタイトル画面を再表示
+                    aScene.addEventListener('exit-vr', () => {
+                        console.log('AR session exited.'); // セッション終了の確認ログ
+                        titleContainer.style.display = 'block'; // タイトル画面を再表示
+                        updateUI(); // UIの状態を更新
+                    });
+
+                    // 最初のUI更新
+                    updateUI();
+                });
+            } else {
+                console.error('A-Frame scene element not found on DOMContentLoaded.');
+            }
+        });
+
+
         // UI更新関数 (JavaScriptのみでUIを制御)
         function updateUI() {
-            // ARボタンはA-Frameが自動で生成するため、ここでは制御しない
+            // A-Frameシーンがロードされていることを確認
+            if (!aScene) {
+                console.warn('a-scene element not found in updateUI. Retrying on loaded.');
+                return;
+            }
+
             // タイトルコンテナはARセッション開始時に非表示、終了時に表示
-            if (AFRAME.scenes[0] && AFRAME.scenes[0].is('ar-mode')) {
+            if (aScene.is('ar-mode')) {
                 titleContainer.style.display = 'none';
                 exitArButton.style.display = 'flex';
                 helpButton.style.display = 'flex';
                 modeSwitchButton.style.display = 'flex';
             } else {
-                titleContainer.style.display = 'block';
+                titleContainer.style.display = 'block'; // ARモードでない場合はタイトルを表示
                 exitArButton.style.display = 'none';
                 helpButton.style.display = 'none';
                 modeSwitchButton.style.display = 'none';
@@ -1807,9 +1861,10 @@
             transformControls.style.display = 'none';
             decisionControls.style.display = 'none';
 
-            const furnitureManager = document.querySelector('a-scene').components['furniture-manager'];
+            // furnitureManager が存在するかどうかを確実にチェック
+            const furnitureManager = aScene.components['furniture-manager'];
 
-            if (isEditMode) {
+            if (isEditMode && furnitureManager) {
                 switch (appState) {
                     case 'IDLE':
                         addButton.style.display = furnitureManager.isFloorDetected ? 'flex' : 'none';
@@ -1964,12 +2019,6 @@
                 loadingDots.textContent = ''; // アニメーション停止時にドットをクリア
             }
         }
-
-        // A-Frameシーンが完全にロードされたら初期UI更新
-        document.querySelector('a-scene').addEventListener('loaded', () => {
-            updateUI();
-        });
-
     </script>
 </body>
 </html>
