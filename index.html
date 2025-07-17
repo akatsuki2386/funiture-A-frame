@@ -8,14 +8,16 @@
     <style>
         body {
             margin: 0;
-            background-color: #1A202C;
+            background-color: #1A202C; /* AR開始前の一瞬の背景色として残す */
             color: white;
             font-family: sans-serif;
             overflow: hidden;
         }
         canvas { display: block; }
 
-        /* タイトルコンテナはAR開始前は表示されるようにデフォルトをblockに */
+        /* タイトルコンテナは完全に削除されるため、このCSSは理論上不要 */
+        /* もし別の場所でIDが再利用される場合のために残すこともできますが、今回は削除 */
+        /*
         #title-container {
             position: absolute;
             top: 40%;
@@ -24,7 +26,7 @@
             text-align: center;
             z-index: 5;
             width: 90%;
-            display: block; /* 初期表示をblockに設定 */
+            display: none; // デフォルトで非表示
         }
         #title-container h1 {
             font-size: 2.2rem;
@@ -33,26 +35,12 @@
             color: white;
             text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
+        */
 
-        /* A-Frameが生成するARボタンにカスタムスタイルを適用 */
+        /* A-Frameが生成するARボタンを非表示にする */
+        /* アプリが自動でARを開始するため、ユーザーがボタンを押す必要がない */
         .a-enter-ar-button, .a-enter-vr-button {
-            color: white !important;
-            background-color: rgba(255, 255, 255, 0.2) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            backdrop-filter: blur(10px) !important;
-            border-radius: 9999px !important;
-            font-size: 16px !important;
-            font-weight: bold !important;
-            padding: 14px 24px !important;
-            min-width: 220px !important;
-            box-shadow: none !important;
-            opacity: 1 !important;
-            position: absolute !important;
-            bottom: 15% !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            z-index: 100 !important;
-            white-space: nowrap !important;
+            display: none !important;
         }
 
         #overlay {
@@ -76,7 +64,7 @@
             padding: 20px 30px;
             border-radius: 15px;
             line-height: 1.7;
-            display: none;
+            display: none; /* 初期は非表示だが、床認識中に表示される */
             pointer-events: none;
             min-width: 260px;
             box-sizing: border-box;
@@ -681,10 +669,6 @@
     </style>
 </head>
 <body>
-    <div id="title-container">
-        <h1>AR家具配置<br>シミュレーション</h1>
-        </div>
-
     <div id="overlay">
 
         <div id="help-modal">
@@ -962,7 +946,7 @@
                 visible="false">
             </a-entity>
             <a-image id="cross-mark"
-                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InJnYmEoMjA0LCAwLCAwLCAwLjgpIi8+PHBhdGggZD0iTTE5Mi4xNDIgNjMuODU4TDYzLjg1OCAxOTIuMTQyTTYzLjg1OCAzMi44NTdMMTkyLjE0MiAxMjYuMTQzIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Z2c+"
+                src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PGNpcmNsZSBjeD0iMTI4IiBjeT0iMTI4IiByPSIxMjgiIGZpbGw9InJnYmEoMjA0LCAwLCAwLCAwLjgpIi8+PHBhdGggZD0iTTE5Mi4xNDIgNjMuODU4TDYzLjg1OCAxOTIuMTQyTTYzLjg1OCAzMi44NTdMMTkyLjE0MiAxMjYuMTQzIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjI1IiBzdHJva2Utd2lkdGg9IjI1IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Z2c+"
                 position="0 0 -3"
                 scale="0.5 0.5 1"
                 visible="false"></a-image>
@@ -978,7 +962,9 @@
 
     <script>
         // DOM要素の取得
-        const titleContainer = document.getElementById('title-container');
+        // titleContainer はHTMLから削除されたため、ここでの取得は不要になるが、
+        // 他の場所で参照されている場合はnullになることを許容するか、削除する
+        const titleContainer = document.getElementById('title-container'); // nullになる想定
         const instructionText = document.getElementById('instruction-text');
         const loadingDots = document.getElementById('loading-dots');
         const modeSwitchButton = document.getElementById('mode-switch-button');
@@ -1046,7 +1032,7 @@
             init: function () {
                 this.reticle = document.getElementById('reticle');
                 this.crossMark = document.getElementById('cross-mark');
-                this.camera = document.getElementById('camera');
+                this.camera = document.getElementById('camera'); // init時にカメラ要素を取得
                 this.el.sceneEl.addEventListener('enter-vr', this.onEnterVR.bind(this));
                 this.el.sceneEl.addEventListener('exit-vr', this.onExitVR.bind(this));
                 this.hitTestSource = null;
@@ -1101,6 +1087,10 @@
                 this.crossMark.setAttribute('visible', 'false');
                 instructionText.style.display = 'none';
                 stopDotAnimation();
+                // URL読み込み時に直接ARを開始するため、exit-vr時には自動的にリロードや別の画面遷移を行うか、
+                // あるいはアプリケーションを終了するロジックが必要になる場合があります。
+                // 現状はタイトル画面がないため、exit-vrで何もしないと真っ暗な画面に戻ります。
+                // 例: window.location.reload(); // ページをリロードして再AR開始を促す
             },
 
             tick: function () {
@@ -1134,28 +1124,32 @@
                     const isOnFloor = Math.abs(hitPosition.y - this.floorY) < Y_TOLERANCE;
 
                     // 衝突判定 (Three.jsのRaycasterをA-Frameで使う場合の例)
-                    const tempVec2 = new AFRAME.THREE.Vector2(0, 0); // 画面中央
-                    const raycaster = this.el.sceneEl.systems.raycaster.unprojectedRaycaster; // A-Frameの内部Raycaster
-                    this.camera.object3D.updateMatrixWorld();
-                    raycaster.setFromCamera(tempVec2, this.camera.object3D);
-
                     let isColliding = false;
-                    // placedObjectsはfurniture-managerで管理されているので、そちらから取得
-                    const furnitureManager = this.el.sceneEl.components['furniture-manager'];
-                    if (furnitureManager && furnitureManager.placedObjects) {
-                        const activeObject = furnitureManager.previewObject || furnitureManager.selectedObject;
-                        for (const placedObj of furnitureManager.placedObjects) {
-                            if (placedObj !== activeObject && placedObj.object3D) { // activeObject自身とは衝突しない
-                                const placedObjBox = new AFRAME.THREE.Box3().setFromObject(placedObj.object3D);
-                                if (activeObject && activeObject.object3D) { // activeObjectも存在することを確認
-                                    const activeObjectBox = new AFRAME.THREE.Box3().setFromObject(activeObject.object3D);
-                                    if (activeObjectBox.intersectsBox(placedObjBox)) {
-                                        isColliding = true;
-                                        break;
+                    if (this.camera && this.camera.components.raycaster) { // cameraとraycasterコンポーネントが存在するかチェック
+                        const tempVec2 = new AFRAME.THREE.Vector2(0, 0); // 画面中央
+                        const raycaster = this.el.sceneEl.systems.raycaster.unprojectedRaycaster; // A-Frameの内部Raycaster
+                        this.camera.object3D.updateMatrixWorld();
+                        raycaster.setFromCamera(tempVec2, this.camera.object3D);
+
+                        const furnitureManager = this.el.sceneEl.components['furniture-manager'];
+                        if (furnitureManager && furnitureManager.placedObjects) {
+                            const activeObject = furnitureManager.previewObject || furnitureManager.selectedObject;
+                            for (const placedObj of furnitureManager.placedObjects) {
+                                if (placedObj !== activeObject && placedObj.object3D) { // activeObject自身とは衝突しない
+                                    const placedObjBox = new AFRAME.THREE.Box3().setFromObject(placedObj.object3D);
+                                    if (activeObject && activeObject.object3D) { // activeObjectも存在することを確認
+                                        const activeObjectBox = new AFRAME.THREE.Box3().setFromObject(activeObject.object3D);
+                                        if (activeObjectBox.intersectsBox(placedObjBox)) {
+                                            isColliding = true;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        // console.warn('Camera or raycaster component not found in ar-hit-test-manager tick. Skipping collision check.');
+                        isColliding = false; // raycasterがない場合、衝突していない（配置可能）と仮定
                     }
 
                     isCurrentlyPlaceable = isOnFloor && !isColliding;
@@ -1168,35 +1162,31 @@
                         this.reticle.setAttribute('visible', isCurrentlyPlaceable && isEditMode);
                         this.crossMark.setAttribute('visible', !isCurrentlyPlaceable && isEditMode);
 
-                        // レティクルとプレビュー/選択オブジェクトの同期
                         const targetObject = furnitureManager.previewObject || furnitureManager.selectedObject;
                         if (targetObject && targetObject.object3D) {
                             targetObject.object3D.position.set(position.x, position.y, position.z);
                             targetObject.object3D.quaternion.set(orientation.x, orientation.y, orientation.z, orientation.w);
-                            // 配置対象がプレビューオブジェクトの場合、高さオフセットを適用
                             if (furnitureManager.previewObject && furnitureManager.previewObject.object3D.userData.centerOffset) {
                                 targetObject.object3D.position.y -= furnitureManager.previewObject.object3D.userData.centerOffset.y;
                             }
                         }
 
                         if (this.crossMark.getAttribute('visible')) {
-                            // クロスマークの位置とスケールを家具に合わせて調整
                             if (targetObject && targetObject.object3D) {
                                 const box = new AFRAME.THREE.Box3().setFromObject(targetObject.object3D);
                                 const size = box.getSize(new AFRAME.THREE.Vector3());
                                 this.crossMark.setAttribute('position', {
                                     x: targetObject.object3D.position.x,
-                                    y: targetObject.object3D.position.y + size.y / 2 + 0.01, // 家具の底面より少し上
+                                    y: targetObject.object3D.position.y + size.y / 2 + 0.01,
                                     z: targetObject.object3D.position.z
                                 });
-                                const scaleValue = Math.max(size.x, size.z) * targetObject.object3D.scale.x * 0.2; // ❌マークの大きさを調整
+                                const scaleValue = Math.max(size.x, size.z) * (targetObject.object3D.scale.x || 1) * 0.2; // scale.xがない場合を考慮
                                 this.crossMark.setAttribute('scale', `${scaleValue} ${scaleValue} 1`);
-                                // クロスマークをカメラの方向に向ける
                                 this.crossMark.object3D.quaternion.copy(this.camera.object3D.quaternion);
                             }
                         }
                         this.el.sceneEl.emit('placeability-changed', { isPlaceable: isCurrentlyPlaceable });
-                    } else { // IDLEモードの場合
+                    } else {
                         this.reticle.setAttribute('visible', 'false');
                         this.crossMark.setAttribute('visible', 'false');
                     }
@@ -1400,11 +1390,7 @@
                     const pressEnd = () => {
                         clearTimeout(pressTimer);
                         if (!this.isRotatingContinuously) {
-                            // 短押しの場合のみ onRotateClick を呼び出す
-                            // event はこのスコープでは定義されていないので、e を使うか、
-                            // onRotateClick の引数から event を削除する (ボタンからのトリガーなので不要)
-                            // ここでは、e.stopPropagation() が既にされているので、event を渡さなくても良い
-                            this.onRotateClick({}, direction); // 仮の空オブジェクトを渡す
+                            this.onRotateClick({}, direction); // 短押しの場合
                         }
                         this.stopContinuousRotation();
                     };
@@ -1798,16 +1784,21 @@
             // A-Frameシーンが完全にロードされてからUIの初期化とイベントリスナーを設定
             if (aScene) {
                 aScene.addEventListener('loaded', () => {
-                    console.log('A-Frame scene loaded.'); // シーンがロードされたことを確認するためのログ
+                    console.log('A-Frame scene loaded. Attempting to enter AR mode automatically.'); // ロードログ
+                    
+                    // URL読み込み後すぐにARモードに入る
+                    // この呼び出しはユーザーインタラクションの直後（例: 最初のタップ）でないと
+                    // ブラウザによってはブロックされる可能性がある点に注意
+                    aScene.enterVR(); // ARモードに入る
 
-                    // VRセッション終了時にタイトル画面を再表示
+                    // VRセッション終了時に画面をリロードまたは終了
                     aScene.addEventListener('exit-vr', () => {
-                        console.log('AR session exited.'); // セッション終了の確認ログ
-                        titleContainer.style.display = 'block'; // タイトル画面を再表示
-                        updateUI(); // UIの状態を更新
+                        console.log('AR session exited. Reloading page.'); // セッション終了ログ
+                        window.location.reload(); // ページをリロードして再AR開始を促す
+                        // もしくは、完全にアプリを閉じる場合は window.close() など
                     });
 
-                    // 最初のUI更新
+                    // 最初のUI更新（ARモードに入った後のUI状態になる）
                     updateUI();
                 });
             } else {
@@ -1820,18 +1811,25 @@
         function updateUI() {
             // A-Frameシーンがロードされていることを確認
             if (!aScene) {
-                console.warn('a-scene element not found in updateUI. Retrying on loaded.');
+                console.warn('a-scene element not found in updateUI. This should be handled by DOMContentLoaded.');
                 return;
             }
 
-            // タイトルコンテナはARセッション開始時に非表示、終了時に表示
+            // タイトルコンテナはHTMLから削除されたため、ここでの制御は不要
+            // if (titleContainer) { /* titleContainerはHTMLから削除されたので参照は不要 */ }
+
+            // ARモードに入るときのUI表示
             if (aScene.is('ar-mode')) {
-                titleContainer.style.display = 'none';
+                // titleContainer はもう存在しないので、この行は削除
+                // if (titleContainer) titleContainer.style.display = 'none';
+
                 exitArButton.style.display = 'flex';
                 helpButton.style.display = 'flex';
                 modeSwitchButton.style.display = 'flex';
             } else {
-                titleContainer.style.display = 'block'; // ARモードでない場合はタイトルを表示
+                // titleContainer はもう存在しないので、この行は削除
+                // if (titleContainer) titleContainer.style.display = 'block';
+
                 exitArButton.style.display = 'none';
                 helpButton.style.display = 'none';
                 modeSwitchButton.style.display = 'none';
