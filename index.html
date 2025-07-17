@@ -1016,6 +1016,28 @@
         const clearSearchButton = document.getElementById('clear-search-button');
         const modalContent = document.getElementById('furniture-modal-inner');
 
+        // app.jsに記述する内容
+        const customARButton = document.getElementById('customARButton');
+        const scene = document.querySelector('a-scene');
+
+        if (customARButton && scene) {
+            customARButton.addEventListener('click', () => {
+                // ARセッションを開始
+                if (scene.has
+            Attribute('webxr')) {
+                    scene.enterVR(); // ARモードに入る
+                    titleContainer.style.display = 'none'; // タイトル画面を非表示にする
+                } else {
+                    alert('お使いのデバイスはARに対応していません。');
+                }
+            });
+
+            // VRセッション終了時にタイトル画面を再表示
+            scene.addEventListener('exit-vr', () => {
+                titleContainer.style.display = 'block';
+            });
+        }
+
         // UI関連の変数
         let appState = 'INITIALIZING'; // INITIALIZING, IDLE, PLACING, EDITING
         let isEditMode = true; // true: 編集モード, false: 鑑賞モード
