@@ -8,16 +8,14 @@
     <style>
         body {
             margin: 0;
-            background-color: #1A202C; /* AR開始前の一瞬の背景色として残す */
+            background-color: #1A202C;
             color: white;
             font-family: sans-serif;
             overflow: hidden;
         }
         canvas { display: block; }
 
-        /* タイトルコンテナは完全に削除されるため、このCSSは理論上不要 */
-        /* もし別の場所でIDが再利用される場合のために残すこともできますが、今回は削除 */
-        /*
+        /* タイトルコンテナはAR開始前は表示されるようにデフォルトをblockに */
         #title-container {
             position: absolute;
             top: 40%;
@@ -26,7 +24,7 @@
             text-align: center;
             z-index: 5;
             width: 90%;
-            display: none; // デフォルトで非表示
+            display: block; /* 初期表示をblockに設定 */
         }
         #title-container h1 {
             font-size: 2.2rem;
@@ -35,12 +33,26 @@
             color: white;
             text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
-        */
 
-        /* A-Frameが生成するARボタンを非表示にする */
-        /* アプリが自動でARを開始するため、ユーザーがボタンを押す必要がない */
+        /* A-Frameが生成するARボタンにカスタムスタイルを適用 */
         .a-enter-ar-button, .a-enter-vr-button {
-            display: none !important;
+            color: white !important;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            backdrop-filter: blur(10px) !important;
+            border-radius: 9999px !important;
+            font-size: 16px !important;
+            font-weight: bold !important;
+            padding: 14px 24px !important;
+            min-width: 220px !important;
+            box-shadow: none !important;
+            opacity: 1 !important;
+            position: absolute !important;
+            bottom: 15% !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 100 !important;
+            white-space: nowrap !important;
         }
 
         #overlay {
@@ -669,6 +681,10 @@
     </style>
 </head>
 <body>
+    <div id="title-container">
+        <h1>AR家具配置<br>シミュレーション</h1>
+    </div>
+
     <div id="overlay">
 
         <div id="help-modal">
@@ -962,9 +978,7 @@
 
     <script>
         // DOM要素の取得
-        // titleContainer はHTMLから削除されたため、ここでの取得は不要になるが、
-        // 他の場所で参照されている場合はnullになることを許容するか、削除する
-        const titleContainer = document.getElementById('title-container'); // nullになる想定
+        const titleContainer = document.getElementById('title-container');
         const instructionText = document.getElementById('instruction-text');
         const loadingDots = document.getElementById('loading-dots');
         const modeSwitchButton = document.getElementById('mode-switch-button');
@@ -1087,10 +1101,8 @@
                 this.crossMark.setAttribute('visible', 'false');
                 instructionText.style.display = 'none';
                 stopDotAnimation();
-                // URL読み込み時に直接ARを開始するため、exit-vr時には自動的にリロードや別の画面遷移を行うか、
-                // あるいはアプリケーションを終了するロジックが必要になる場合があります。
-                // 現状はタイトル画面がないため、exit-vrで何もしないと真っ暗な画面に戻ります。
-                // 例: window.location.reload(); // ページをリロードして再AR開始を促す
+                // ページをリロードしてARを再開できるようにする
+                // window.location.reload();
             },
 
             tick: function () {
@@ -1784,21 +1796,12 @@
             // A-Frameシーンが完全にロードされてからUIの初期化とイベントリスナーを設定
             if (aScene) {
                 aScene.addEventListener('loaded', () => {
-                    console.log('A-Frame scene loaded. Attempting to enter AR mode automatically.'); // ロードログ
+                    console.log('A-Frame scene loaded.'); // ロードログ
                     
-                    // URL読み込み後すぐにARモードに入る
-                    // この呼び出しはユーザーインタラクションの直後（例: 最初のタップ）でないと
-                    // ブラウザによってはブロックされる可能性がある点に注意
-                    aScene.enterVR(); // ARモードに入る
+                    // WebXRセッションを自動開始（ユーザーインタラクションが必要なため、この行はコメントアウト推奨）
+                    // aScene.enterVR(); 
 
-                    // VRセッション終了時に画面をリロードまたは終了
-                    aScene.addEventListener('exit-vr', () => {
-                        console.log('AR session exited. Reloading page.'); // セッション終了ログ
-                        window.location.reload(); // ページをリロードして再AR開始を促す
-                        // もしくは、完全にアプリを閉じる場合は window.close() など
-                    });
-
-                    // 最初のUI更新（ARモードに入った後のUI状態になる）
+                    // AR/VRボタンの表示状態を更新
                     updateUI();
                 });
             } else {
@@ -1815,21 +1818,14 @@
                 return;
             }
 
-            // タイトルコンテナはHTMLから削除されたため、ここでの制御は不要
-            // if (titleContainer) { /* titleContainerはHTMLから削除されたので参照は不要 */ }
-
-            // ARモードに入るときのUI表示
+            // タイトルコンテナはHTMLにあるため、ARモードによって表示を切り替える
             if (aScene.is('ar-mode')) {
-                // titleContainer はもう存在しないので、この行は削除
-                // if (titleContainer) titleContainer.style.display = 'none';
-
+                if (titleContainer) titleContainer.style.display = 'none'; // タイトル非表示
                 exitArButton.style.display = 'flex';
                 helpButton.style.display = 'flex';
                 modeSwitchButton.style.display = 'flex';
             } else {
-                // titleContainer はもう存在しないので、この行は削除
-                // if (titleContainer) titleContainer.style.display = 'block';
-
+                if (titleContainer) titleContainer.style.display = 'block'; // タイトル表示
                 exitArButton.style.display = 'none';
                 helpButton.style.display = 'none';
                 modeSwitchButton.style.display = 'none';
